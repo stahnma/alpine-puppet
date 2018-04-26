@@ -28,7 +28,7 @@ run gem install --no-rdoc --no-ri deep_merge
 run cd /workspace && git clone https://github.com/puppetlabs/pxp-agent && git clone https://github.com/puppetlabs/cpp-pcp-client
 run cd /workspace/cpp-pcp-client &&  mkdir -p build; cd build; cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON ; make -j2 ; make install
 run cd /workspace/pxp-agent && mkdir -p build; cd build; cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON; make -j2 ; make install
-run cd /workspace; curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && tar zxf virt-what-1.18.tar.gz && cd virt-what-1.18 && ./configure && make && make install
+run cd /workspace; curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && tar zxf virt-what-1.18.tar.gz && cd virt-what-1.18 && ./configure && make -j2 && make install
 
 run  cd /workspace && git clone https://github.com/puppetlabs/hiera  && cd hiera && ./install.rb --no-configs --bindir=/usr/local/bin 
 run  cd /workspace && git clone https://github.com/puppetlabs/puppet && cd puppet &&  ruby install.rb --ruby=/usr/bin/ruby --no-check-prereqs --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/opt/puppetlabs/puppet/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --rundir=/var/run/puppetlabs --logdir=/var/log/puppetlabs --localedir=/opt/puppetlabs/puppet/share/locale --configs --quick --no-batch-files
