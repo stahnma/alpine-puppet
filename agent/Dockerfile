@@ -3,6 +3,11 @@
 from alpine
 
 run apk update && apk add cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev openjdk8
+
+# ruby
+
+
+
 env JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/
 env PATH=$PATH:/usr/lib/jvm/java-1.8-openjdk/bin
 run mkdir /workspace && cd workspace && \
@@ -26,7 +31,7 @@ run cd /workspace/pxp-agent && mkdir -p build; cd build; cmake ..  -DCMAKE_VERBO
 run cd /workspace; curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && tar zxf virt-what-1.18.tar.gz && cd virt-what-1.18 && ./configure && make && make install
 
 run  cd /workspace && git clone https://github.com/puppetlabs/hiera  && cd hiera && ./install.rb --no-configs --bindir=/usr/local/bin 
-run  cd /workspace && git clone https://github.com/puppetlabs/puppet && cd puppet && ./install.rb --bindir=/usr/local/bin --configdir=/etc/puppetlabs/puppet --codedir=/etc/puppetlabs/puppet/code --vardir=/usr/local/var/lib/puppet --logdir=/var/log/puppet --rundir=/var/run --quick
+run  cd /workspace && git clone https://github.com/puppetlabs/puppet && cd puppet &&  ruby install.rb --ruby=/usr/bin/ruby --no-check-prereqs --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/opt/puppetlabs/puppet/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --rundir=/var/run/puppetlabs --logdir=/var/log/puppetlabs --localedir=/opt/puppetlabs/puppet/share/locale --configs --quick --no-batch-files
 
 
 from alpine:latest
@@ -38,9 +43,13 @@ COPY --from=0 /etc/puppetlabs /etc/puppetlabs
 COPY --from=0 /usr/local/share /usr/local/share
 COPY --from=0 /usr/local/bin /usr/local/bin
 COPY --from=0 /usr/local/lib /usr/local/lib
-run mkdir -p /opt/puppetlabs/puppet/lib/ruby && cd /opt/puppetlabs/puppet/lib/ruby && ln -s /usr/lib/ruby/vendor_ruby .
-run mkdir -p /opt/puppetlabs/puppet/bin ; ln -s /usr/local/bin/puppet /opt/puppetlabs/puppet/bin/puppet
-run cd /opt/puppetlabs/puppet/lib/ruby/vendor_ruby; ln -s /usr/local/lib/site_ruby/2.4.0/puppet/ .
-run mkdir -p /opt/puppetlabs/puppet/lib/ruby/gems ; cd /opt/puppetlabs/puppet/lib/ruby/gems ; ln -s /usr/lib/ruby/gems/2.4.0/ .
+run mkdir -p /opt/puppetlabs/puppet/lib/ruby && cd /opt/puppetlabs/puppet/lib/ruby && ln -s /usr/lib/ruby/vendor_ruby . && \
+    mkdir -p /opt/puppetlabs/puppet/bin ; ln -s /usr/local/bin/puppet /opt/puppetlabs/puppet/bin/puppet && \
+    mkdir -p /opt/puppetlabs/bin ; ln -s /usr/local/bin/puppet /opt/puppetlabs/bin/puppet &&\
+    mkdir -p /opt/puppetlabs/facter ; ln -s /usr/local/bin/facter /opt/puppetlabs/bin/facter &&\
+   cd /opt/puppetlabs/puppet/lib/ruby/vendor_ruby; ln -s /usr/local/lib/site_ruby/2.4.0/puppet/ . && \
+   mkdir -p /opt/puppetlabs/puppet/lib/ruby/gems ; cd /opt/puppetlabs/puppet/lib/ruby/gems ; ln -s /usr/lib/ruby/gems/2.4.0/ .
 
 COPY Dockerfile /Dockerfile
+CMD ["/opt/puppetlabs/bin/puppet"]
+
